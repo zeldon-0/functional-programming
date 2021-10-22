@@ -1,0 +1,29 @@
+#lang racket
+; Лавріненко В.В.
+; ІПЗ-42
+; Л.р. 3, завдання 14.2
+
+(define a -1)
+(define b pi)
+
+(define (f x)
+  (* x (exp (* -1 x)))
+)
+
+
+(define (right-rectangles a b n)
+  
+)
+
+(define (rectangle-sum current-x end-x step current-sum)
+   (let ((current-f (f current-x)))
+     (if (= current-x end-x)
+         current-sum
+         (rectangle-sum (+ current-x step) end-x step (+ current-sum current-f))
+     ))
+)
+
+
+(display (f 1))
+
+
