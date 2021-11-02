@@ -1,38 +1,19 @@
 #lang racket
+
 ; Лавріненко В.В.
 ; ІПЗ-42
-; Л.р. 3, завдання 14.2
+; МКР №1, практична частина
+; IDE: DrRacket
 
 ; Початок проміжку
-(define start -1)
+(define start 0)
 ; Кінець проміжку
 (define end pi)
 ; Процедура обчислення значення заданої функції
 (define (f x)
-  (* x (exp (* -1 x)))
+  (sin (* 2 (cos x)))
 )
 
-; Процедура обчислення інтегралу за методом правих прямокутників
-(define (right-rectangles a b n)
-  ; Визначення величини кроку
-  (let* ([step (/(- b a)n)]
-    ; Обчислення суми значень f(x), на проміжку i=1...n 
-    [sum (rectangle-sum (+ a step) b step 0)])
-    ; Повернення кінцевого значення як добутку кроку на суму значень функції 
-    (* step sum)
-  )
-)
-
-; Процедура обчислення інтегралу за методом лівих прямокутників
-(define (left-rectangles a b n)
-  ; Визначення величини кроку
-  (let* ([step (/(- b a)n)]
-    ; Обчислення суми значень f(x), на проміжку i=0...n-1 
-    [sum (rectangle-sum a (- b step) step 0)])
-    ; Повернення кінцевого значення як добутку кроку на суму значень функції 
-    (* step sum)
-    )
-)
 ; Процедура обчислення інтегралу за методом середніх прямокутників
 (define (middle-rectangles a b n)
   ; Визначення величини кроку
@@ -43,18 +24,7 @@
     (* step sum)
     )
 )
-; Процедура обчислення суми значень f(x) для всіх x на заданому проміжку
-(define (rectangle-sum current-x end-x step current-sum)
-   ; Поточне значення визначається як f(x)
-   (let ((current-f (f current-x)))
-     ; Якщо x вийшло за заданий проиіжок, повертається сума, отримана попереднім викликом процедури
-     (if (> current-x end-x)
-         current-sum
-         ; Інакше рекурсивно обчислюється сума для подальших x на проміжку
-         (rectangle-sum (+ current-x step) end-x step (+ current-sum current-f))
-     )
-   )
-)
+
 ; Процедура обчислення суми значень f((xk + xk+1)/2) для всіх x на заданому проміжку
 (define (middle-rectangle-sum current-x end-x step current-sum)
    ; Поточне значення визначається як f(x + step / 2)
@@ -97,20 +67,23 @@
    )
 )
 
-(define steps 50)
-(define right-rectangle-solution (right-rectangles start end steps))
-(define left-rectangle-solution (left-rectangles start end steps))
+; Кількість проміжків, для яких виконуватимуться обидва методи
+(define steps 1000)
+; Обчислення інтегралу за методом середніх прямокутників
 (define middle-rectangle-solution (middle-rectangles start end steps))
+; Обчислення інтегралу за методом Сімпсона
 (define simpson-solution (simpson start end steps))
 
-(display "Solution using the Right Rectangle method: ")
-(display right-rectangle-solution)
-(display "\n")
-(display "Solution using the Left Rectangle method: ")
-(display left-rectangle-solution)
-(display "\n")
+
 (display "Solution using the Middle Rectangle method: ")
 (display middle-rectangle-solution)
 (display "\n")
 (display "Solution using the Simpson method: ")
 (display simpson-solution)
+(display "\n")
+(display "Solutions difference: ")
+(display (abs (-  middle-rectangle-solution simpson-solution)))
+
+; При встановленій кількості проміжків 1000 результати відрізняються  на 0.005713318639527355, що, в цілому, є відносно хорошим показником точності.
+; Тим не менш, можемо судити, що метод Сімпсона, ймовірно, дає менш точні результати, в той час як метод середніх прямокутників дає результат, ща наближаєтсья до нуля,
+; що відповідає графіку: 2 ділянки, площа яких обчислюється, та додається з протилежними знаками, є візулаьно симетричними, отже можемо судити, що результат дійсно має бути 0

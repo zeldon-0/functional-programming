@@ -1,7 +1,7 @@
 #lang racket
 ; Лавріненко В.В.
 ; ІПЗ-42
-; Л.р. 3, завдання 14.2
+; Л.р. 4, завдання 14.2
 
 ; Початок проміжку
 (define start -1)
@@ -97,7 +97,7 @@
    )
 )
 
-(define steps 50)
+(define steps 1000)
 (define right-rectangle-solution (right-rectangles start end steps))
 (define left-rectangle-solution (left-rectangles start end steps))
 (define middle-rectangle-solution (middle-rectangles start end steps))
