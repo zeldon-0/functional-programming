@@ -3,114 +3,120 @@
 ; ІПЗ-42
 ; Л.р. 4, завдання 14.2
 
-; Початок проміжку
-(define start -1)
-; Кінець проміжку
-(define end pi)
-; Процедура обчислення значення заданої функції
-(define (f x)
-  (* x (exp (* -1 x)))
-)
+(define store-stock (list 300 300 300 300 300 300))
+(define store-restock-wait (list 0 0 0 0 0 0))
+(define store-restock-wait-status (list #f #f #f #f #f #f))
+(define store-restock-size 1000)
+(define store-stock-loss 10)
+(define store-restock-delay 6)
+(define warehouse-stock 1000)
+(define warehouse-restock-size 1000)
+(define warehouse-restock-delay 90)
+(define warehouse-restock-frequency 14)
+(define day-counter 0)
 
-; Процедура обчислення інтегралу за методом правих прямокутників
-(define (right-rectangles a b n)
-  ; Визначення величини кроку
-  (let* ([step (/(- b a)n)]
-    ; Обчислення суми значень f(x), на проміжку i=1...n 
-    [sum (rectangle-sum (+ a step) b step 0)])
-    ; Повернення кінцевого значення як добутку кроку на суму значень функції 
-    (* step sum)
+
+(define (get-list-element elements n) 
+  (if (= n 1) 
+      (car elements)
+         (get-list-element (cdr elements) (- n 1 ))
   )
 )
 
-; Процедура обчислення інтегралу за методом лівих прямокутників
-(define (left-rectangles a b n)
-  ; Визначення величини кроку
-  (let* ([step (/(- b a)n)]
-    ; Обчислення суми значень f(x), на проміжку i=0...n-1 
-    [sum (rectangle-sum a (- b step) step 0)])
-    ; Повернення кінцевого значення як добутку кроку на суму значень функції 
-    (* step sum)
-    )
-)
-; Процедура обчислення інтегралу за методом середніх прямокутників
-(define (middle-rectangles a b n)
-  ; Визначення величини кроку
-  (let* ([step (/(- b a)n)]
-    ; Обчислення суми значень f((xk + xk+1)/2), для точок на проміжку i=0...n-1 
-    [sum (middle-rectangle-sum a (- b step) step 0)])
-    ; Повернення кінцевого значення як добутку кроку на суму значень функції 
-    (* step sum)
-    )
-)
-; Процедура обчислення суми значень f(x) для всіх x на заданому проміжку
-(define (rectangle-sum current-x end-x step current-sum)
-   ; Поточне значення визначається як f(x)
-   (let ((current-f (f current-x)))
-     ; Якщо x вийшло за заданий проиіжок, повертається сума, отримана попереднім викликом процедури
-     (if (> current-x end-x)
-         current-sum
-         ; Інакше рекурсивно обчислюється сума для подальших x на проміжку
-         (rectangle-sum (+ current-x step) end-x step (+ current-sum current-f))
-     )
-   )
-)
-; Процедура обчислення суми значень f((xk + xk+1)/2) для всіх x на заданому проміжку
-(define (middle-rectangle-sum current-x end-x step current-sum)
-   ; Поточне значення визначається як f(x + step / 2)
-   (let ((current-f (f (+ current-x  (/ step 2)))))
-     ; Якщо x вийшло за заданий проиіжок, повертається сума, отримана попереднім викликом процедури
-     (if (> current-x end-x)
-         current-sum
-         ; Інакше рекурсивно обчислюється сума для подальших x на проміжку
-         (middle-rectangle-sum (+ current-x step) end-x step (+ current-sum current-f))
-     )
-   )
-)
-; Процедура для обчислення інтегралу за методом Сімпсона на заданому проміжку
-(define (simpson a b n)
-  ; Визначення величини кроку
-  (let* ([step (/ (- b a) n)]
-    ; Обчислення суми виразу, наведеного у формулі, для всіх x на проміжку від a до b
-    [sum (simpson-step a b step 0)])
-    ; Повернення кінцевого результату як вищезгадана сума, помножена на третину кроку 
-    (* (/ step 3) sum)
+(define (set-list-element elements n value) 
+  (if (= n 1) 
+      (append (list value) (cdr elements))
+         (append (list (car elements)) (set-list-element (cdr elements) (- n 1 ) value))
   )
 )
 
-; Процедура для обчислення суми виразу, наведеного у формулі методу Сімпсона
-(define (simpson-step current-x end-x step current-sum)
-     ; Визначення величини в заданій точці
-     (let* ([start-f (f current-x)]
-            ; Визначення величини в точці, отриманій додаванням кроку до заданої
-            [middle-f (f (+ current-x step))]
-            ; Визначення величини в точці, отриманій додаванням 2 величин кроку до заданої
-            [end-f (f (+ current-x step step))]
-            ; Визначення величини суми для поточної ітерації
-            [step-sum (+ start-f (* 4 middle-f) end-f)])
-     ; Якщо x вийшло за заданий проиіжок, повертається сума, отримана попереднім викликом процедури
-     (if (> current-x end-x)
-         current-sum
-         ; Інакше рекурсивно обчислюється сума для подальших x на проміжку
-         (simpson-step (+ current-x step step) end-x step (+ current-sum step-sum))
-     )
+(define (simulate days)
+  (simulate-internal 1 days)
+)
+
+(define (simulate-internal current-day days)
+  (cond [(< current-day days)
+           (begin
+             (sell-stock)
+             (await-stock)
+             (send-stock)
+             (print-status current-day)
+             (simulate-internal (+ 1 current-day) days)
+            )
+         ]
+  )
+)
+
+(define (sell-stock)
+  (sell-stock-internal 1)
+)
+
+(define (sell-stock-internal n)
+  (cond[(and (< n 7) (> (get-list-element store-stock n) (- store-stock-loss 1)))
+        (begin
+        (set! store-stock (set-list-element store-stock n (- (get-list-element store-stock n) store-stock-loss)))
+        (sell-stock-internal (+ n 1))
+        )]
    )
 )
 
-(define steps 1000)
-(define right-rectangle-solution (right-rectangles start end steps))
-(define left-rectangle-solution (left-rectangles start end steps))
-(define middle-rectangle-solution (middle-rectangles start end steps))
-(define simpson-solution (simpson start end steps))
+(define (send-stock)
+  (send-stock-internal 1)
+)
 
-(display "Solution using the Right Rectangle method: ")
-(display right-rectangle-solution)
+(define (send-stock-internal n)
+  (cond[(and (< n 7) (or (> warehouse-stock store-restock-size) (= warehouse-stock store-restock-size)) (= (get-list-element  store-restock-wait n) 0))
+        (begin
+        (set! warehouse-stock (- warehouse-stock store-restock-size))
+        (set! store-restock-wait (set-list-element store-restock-wait n  store-restock-delay))
+        (set! store-restock-wait-status (set-list-element store-restock-wait-status n #t))
+        (send-stock-internal (+ n 1))
+        )]
+   )
+)
+
+(define (await-stock)
+  (await-stock-internal 1)
+)
+
+(define (await-stock-internal n)
+  (cond[(and (< n 7) (> (get-list-element  store-restock-wait n) 0))
+        (begin
+        (set! store-restock-wait (set-list-element store-restock-wait n (- (get-list-element  store-restock-wait n) 1)))
+        (await-stock-internal (+ n 1))
+        )]
+       [(and (< n 7) (= (get-list-element  store-restock-wait n) 0) (get-list-element  store-restock-wait-status n))
+        (begin
+        (set! store-stock (set-list-element store-stock n (+ (get-list-element  store-stock n) store-restock-size)))
+        (set! store-restock-wait-status (set-list-element store-restock-wait-status n #f))
+        (await-stock-internal (+ n 1))
+        )]
+   )
+)
+
+(define (print-status current-day)
+  (begin
+    (display "Day ")
+    (display current-day)
+    (display "\n")
+    (display "Current stock among the stores: ")
+    (display store-stock)
+    (display "\n")
+    (display "Days left until the stores are restocked: ")
+    (display store-restock-wait)
+    (display "\n")
+    (display "Current amount in-stock at the warehouse: ")
+    (display warehouse-stock)
+    (display "\n")
+    (display "==============================================================\n")
+  )
+)
+
+
 (display "\n")
-(display "Solution using the Left Rectangle method: ")
-(display left-rectangle-solution)
+(simulate 10)
 (display "\n")
-(display "Solution using the Middle Rectangle method: ")
-(display middle-rectangle-solution)
-(display "\n")
-(display "Solution using the Simpson method: ")
-(display simpson-solution)
+
+
+
+

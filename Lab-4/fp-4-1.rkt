@@ -45,7 +45,6 @@
   ) 
 )
 
-
 (define (get-subset current-list)
   (cond [(null? current-list)
          current-list]
@@ -57,13 +56,16 @@
 )
 
 
-
 (define size 20)
 (define starting-list (make-list size))
+(display "The starting list:\n")
 (display starting-list)
 (display "\n")
+(display "Sum of the list's even members:\n")
 (display (even-member-sum starting-list))
 (display "\n")
+(display "The list with all its members that are multiples of 5, multiplied by 10:\n")
 (display (replace-elements starting-list))
 (display "\n")
+(display "The elements of the list that are multiples of 10:\n")
 (display (get-subset starting-list))
