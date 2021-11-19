@@ -58,7 +58,7 @@
   )
 )
 
-(define numbers (list (cons 1 2) (cons 5 4) (cons 7 13) (cons 4 19)))
+(define numbers (list (cons 1 2) (cons 5 4) (cons 7 13) (cons 4 19) (cons -5 27) (cons 8 19)))
 (display "The starting fractions list: ")
 (print-fractions numbers 1)
 (display "The new fractions list: ")
