@@ -118,10 +118,13 @@
           (make-cos (tan-base exp))
      )
     ]
-    [(tan? exp)
+    [(cotan? exp)
      (make-product
           (deriv (tan-base exp) var)
-          (make-exponent (make-cos (tan-base exp)) '-2)
+          (make-product
+           '-1
+           (make-exponent (make-sin (tan-base exp)) '-2)
+          )
      )
     ]
     [else
@@ -162,8 +165,8 @@
      (cos (calculate (tan-base exp) var var-value)
      )
     ]
-    [(tan? exp)
-     (tan (calculate (tan-base exp) var var-value)
+    [(sin? exp)
+     (sin (calculate (tan-base exp) var var-value)
      )
     ]
     [else
@@ -181,13 +184,6 @@
 (deriv '(expt x 3) 'x)
 (deriv '(/ x (+ (* 2 x) y)) 'x)
 
-;(define result (deriv (deriv '(/ (* 3  x) (+ (* 2 x) (* x x))) 'x) 'x))
-;(calculate result 'x 1)
-
-;(calculate (second-derivative '(expt x 3) 'x) 'x 4)
-
-
-;(define result (second-derivative '(tan (* 2 x)) 'x))
-(define result (second-derivative '(tan (* 2 x)) 'x))
+(define result (second-derivative '(cotan (* 2 x)) 'x))
 
 (calculate result 'x 1)
