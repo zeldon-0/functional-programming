@@ -178,6 +178,25 @@
    (deriv (deriv exp var)  var)
 )
 
+
+(define (find-function-monotinicity exp variable-value)
+  (begin
+    (define first-deriv (deriv exp 'x))
+    (define second-deriv (second-derivative exp 'x))
+    (define first-deriv-value (calculate first-deriv 'x variable-value))
+    (define second-deriv-value (calculate second-deriv 'x variable-value))
+    (display "The function's first derivative: \n")
+    (display first-deriv)
+    (newline)
+    (display "===========================")
+    (display "The function's second derivative: \n")
+    (display second-deriv)
+    (newline)
+    (display "===========================")
+    
+    )
+  )
+
 (deriv '(* (* x y) (+ x 3)) 'x)
 (deriv '3 'x)
 (deriv '(* x y) 'x)
