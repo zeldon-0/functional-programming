@@ -3,6 +3,7 @@
 ; ІПЗ-42
 ; Л.р. 7, завдання 14
 
+; функція, що визначає, чи є поточний символ голосною літерою 
 (define (is-vowel char)  
   (cond
     [(eq? char #\a) #t]
@@ -15,31 +16,41 @@
   )
 )
 
+; функція, що визначає кількість голосних у поточному слові
 (define (count-vowels word current-count index)
+  ; якщо за поточним індексом - голосна, збільшити лічильник на 1
   (cond [(and (< index (string-length word)) (is-vowel (string-ref word index)) )
          (count-vowels word (+ 1 current-count) (+ 1 index))
          ]
+         ; якщо за поточним індексом - не голосна, розглянути наступний символ з незмінним лічильником 
         [(and (< index (string-length word)) (not (is-vowel (string-ref word index))))
          (count-vowels word current-count (+ 1 index))
          ]
+        ; по закінченню слова повернути значення лічильника
         [else
          current-count]
   )
 )
 
+; функція для пошуку слова з найбільшою кількістю голосних у рядку
 (define (find-maximum-vowel-word line index maximum-vowel-word)
+  ; якщо за поточним індексом - слово з більшою кількістю голосних, ніж поточна, зберегти даний індекс і кількість голосних як поточні
   (cond [(and (< index (length line)) (> (count-vowels (list-ref line index) 0 0) (cdr maximum-vowel-word)) )
          (find-maximum-vowel-word line (+ 1 index) (cons index (count-vowels (list-ref line index) 0 0)))
          ]
+        ; якщо за поточним індексом - слово не з більшою кількістю голосних, ніж поточна, не робити змін поточним значеннями
         [(and (< index (length line)) (not (> (count-vowels (list-ref line index) 0 0) (cdr maximum-vowel-word))))
          (find-maximum-vowel-word line (+ 1 index) maximum-vowel-word)
          ]
+        ; по закінченню рядка повернути індекс та кількість голосних знайденого слова
         [else
          maximum-vowel-word]
   )
 )
 
+; функця створення підрядку з цифр заданої довжини
 (define (create-number-string length [current-string ""])
+  ; на кожній ітерації поточний рядок доповнюється нгаступною цифрою (залишком від ділення поточного числа на 10)
   (cond [(< (string-length current-string) length)
          (create-number-string length (string-append current-string (number->string (modulo (+ 1 (string-length current-string)) 10))))]
         [else
@@ -47,11 +58,16 @@
   )
 )
 
+; функція створення результуючого рядка
 (define (create-modified-string line)
   (begin
+    ; знаходження слова з найбільшою кількістю голосних
     (define maximum-vowel-word (find-maximum-vowel-word line 0 (cons 0 0)))
+    ; знаходження кількості символів у вищезгаданому слові
     (define character-count (string-length (list-ref line (car maximum-vowel-word))))
+    ; формування "слова" з послідовності цифр 
     (define number-string (create-number-string character-count))
+    ; створення кінцевого рядка як списка з усіх слів до знайденого, слова з цифр і решти слів - після знайденого
     (define modified-string (append (take line (car maximum-vowel-word)) (list number-string) (list-tail line (+ 1(car maximum-vowel-word)))))
     modified-string
   )
