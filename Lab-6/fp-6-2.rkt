@@ -25,7 +25,7 @@
     popped-number
   )
 )
-є
+
 ; функція додавання останнього елемента в чергу
 (define (push-queue n)
   (begin
