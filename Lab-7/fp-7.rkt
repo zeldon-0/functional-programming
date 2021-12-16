@@ -79,7 +79,7 @@
 (define output-port-initial (open-output-file "E:\\FP-files\\input.txt"))
 (write '(The preach like a lullaby) output-port-initial)
 (write '(A dark shadow equals an apocalyptic catastrophe) output-port-initial)
-(write '(Distressed at the future disaster) output-port-initial)
+(write '(Distressed at the futuuuuuuuure disaster) output-port-initial)
 (write '(The whole world is a fireball) output-port-initial)
 (close-output-port output-port-initial)
 

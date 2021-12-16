@@ -6,20 +6,17 @@
 ; точність, за якою визначається закінчення процедури 
 (define error 1e-5)
 
-; f(x) = e^x + ln x - 10x
+; f(x) = e^x + 10x
 (define (f x)
-  ;(+ (exp x) (log x) (* -10 x))
-  (- (* 2 x) (cos x))
+  (+ (exp x) (* 10 x))
 )
-; X = (e^x + ln x) / 10
+; X = e^x / (-10)
 (define (x-func x)
-  ;(/(+ (exp x) (log x))10)
-  (/ (cos x) 2)
+  (/ (exp x) -10)
 )
-;f'(x) = e^x + 1/x - 10
+;f'(x) = e^x + 10
 (define (f-derivative x)
-  ;(+ (exp x) (/ 1 x) -10)
-  (+ (sin x) 2)
+  (+ (exp x) 10)
 )
 
 ; Процедура обчислення кореня методом простої ітерації
@@ -48,8 +45,27 @@
   )
 )
 
-(define fixed-point-iteration-solution (fixed-point-iteration -3))
-(define newton-solution (newton-method -3))
+
+(define (bisection current-a current-b)
+  ; Обчислення наступного значення X, спираючись на канонічне рівняння для поточного
+  (let ((next-f (f (/ (+ current-a current-b) 2)))
+        (f-a (f current-a))
+        (f-b (f current-b)))
+    ; Якщо різниця між поточним та наступним X менша за похибку, рекурсія припиняється, і повертається поточне значення
+    (if (< (abs next-f) error)
+      (/ (+ current-a current-b) 2)
+      ; Інакше процедура рекурсивно обчислює наступне наближене значення, використовуючи нове значення як поточне
+      (if (< (* f-a next-f) 0)
+          (bisection current-a (/ (+ current-a current-b) 2))
+          (bisection (/ (+ current-a current-b) 2) current-b)
+      )
+    )
+  )
+)
+
+(define fixed-point-iteration-solution (fixed-point-iteration 4))
+(define newton-solution (newton-method 4))
+(define bisection-solution (bisection -5 5))
 (define solution-difference (abs (- fixed-point-iteration-solution newton-solution)))
 
 (display "Solution using the Fixed-Point Iteration method: ")

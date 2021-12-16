@@ -266,7 +266,7 @@
 )
 
 
-(define expression '(/ x (+ (* 2 x) (cotan x))))
+(define expression '(/ x (- (* 2 x) (cotan x))))
 
 
-(find-function-monotinicity expression  1)
+(find-function-monotinicity expression 0.5)
